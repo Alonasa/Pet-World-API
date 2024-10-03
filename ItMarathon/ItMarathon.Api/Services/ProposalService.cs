@@ -2,10 +2,12 @@
 using ItMarathon.Api.Common.Contracts;
 using ItMarathon.Api.Dtos.PropertyDtos;
 using ItMarathon.Api.Dtos.ProposalDtos;
+using ItMarathon.Api.Utilities;
 using ItMarathon.Dal.Common.Contracts;
 using ItMarathon.Dal.Entities;
 using ItMarathon.Dal.Enums;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 
 namespace ItMarathon.Api.Services;
 
@@ -17,8 +19,12 @@ namespace ItMarathon.Api.Services;
 /// <param name="blobService">The service managing Azure Blob storage operations.</param>
 public class ProposalService(IUnitOfWork unitOfWork, IMapper mapper, IAzureBlobService blobService) : IProposalService
 {
+    private static readonly IEdmModel _edmModel = ODataUtility.GetEdmModel();
+
+
+
     /// <inheritdoc/>
-    public async Task<IEnumerable<ProposalDto>> GetAllProposalsAsync()
+    public async Task<IEnumerable<ProposalDto>> GetAllProposalsAsync(HttpRequest request)
     {
         var proposals = await unitOfWork.Proposals.GetProposalsAsync(false);
         return mapper.Map<IEnumerable<ProposalDto>>(proposals);
