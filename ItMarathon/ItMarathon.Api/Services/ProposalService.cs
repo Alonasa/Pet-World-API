@@ -7,7 +7,9 @@ using ItMarathon.Dal.Common.Contracts;
 using ItMarathon.Dal.Entities;
 using ItMarathon.Dal.Enums;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.OData.Edm;
+using Microsoft.OData.UriParser;
 
 namespace ItMarathon.Api.Services;
 
@@ -22,11 +24,13 @@ public class ProposalService(IUnitOfWork unitOfWork, IMapper mapper, IAzureBlobS
     private static readonly IEdmModel _edmModel = ODataUtility.GetEdmModel();
 
 
-
     /// <inheritdoc/>
     public async Task<IEnumerable<ProposalDto>> GetAllProposalsAsync(HttpRequest request)
     {
-        var proposals = await unitOfWork.Proposals.GetProposalsAsync(false);
+        var odataQueryContext = new ODataQueryContext(_edmModel, typeof(Proposal), new ODataPath());
+        var queryOptions = new ODataQueryOptions<Proposal>(odataQueryContext, request);
+
+        var proposals = await unitOfWork.Proposals.GetProposalsAsync(false, queryOptions);
         return mapper.Map<IEnumerable<ProposalDto>>(proposals);
     }
 
@@ -294,5 +298,15 @@ public class ProposalService(IUnitOfWork unitOfWork, IMapper mapper, IAzureBlobS
             var duplicates = string.Join(", ", duplicateGroups.Select(g => g.Key));
             modelState.AddModelError("Properties", $"Cannot add the same properies with id: {duplicates}");
         }
+    }
+
+    public Task<IEnumerable<ProposalDto>> GetAllProposalsAsync(bool trackChanges, ODataQueryOptions queryOptions)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<object?> IProposalService.GetAllProposalsAsync(HttpRequest request)
+    {
+        throw new NotImplementedException();
     }
 }

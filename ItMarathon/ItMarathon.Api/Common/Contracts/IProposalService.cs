@@ -2,6 +2,7 @@
 using ItMarathon.Api.Dtos.ProposalDtos;
 using ItMarathon.Dal.Entities;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace ItMarathon.Api.Common.Contracts;
 
@@ -14,7 +15,7 @@ public interface IProposalService
     /// Retrieves list of proposals.
     /// </summary>
     /// <returns>A task that contains a page of proposals.</returns>
-    Task<IEnumerable<ProposalDto>> GetAllProposalsAsync(HttpRequest request);
+    Task<IEnumerable<ProposalDto>> GetAllProposalsAsync(bool trackChanges, ODataQueryOptions queryOptions);
 
     /// <summary>
     /// Retrieves a specific proposal by its unique identifier.
@@ -75,4 +76,5 @@ public interface IProposalService
     /// </param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task ValidatePropertiesAsync<T>(ICollection<T> propertyDtos, ModelStateDictionary modelState) where T : CreatePropertyDto;
+    Task<object?> GetAllProposalsAsync(HttpRequest request);
 }

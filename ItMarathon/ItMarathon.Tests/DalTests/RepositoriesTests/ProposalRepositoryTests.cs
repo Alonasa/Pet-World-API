@@ -3,7 +3,11 @@ using ItMarathon.Dal.Context;
 using ItMarathon.Dal.Entities;
 using ItMarathon.Dal.Repositories;
 using ItMarathon.Tests.DalTests.Fixtures;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OData.Edm;
+using Microsoft.OData.UriParser;
 
 namespace ItMarathon.Tests.DalTests.RepositoriesTests;
 
@@ -16,9 +20,12 @@ public class ProposalRepositoryTests
         // Arrange
         var repository = new ProposalRepository(context);
         var initialCount = await context.Proposals.CountAsync();
+        var edmModel = new EdmModel(); // Initialize your EDM model appropriately
+        var odataQueryContext = new ODataQueryContext(edmModel, typeof(Proposal), new ODataPath());
+        var queryOptions = new ODataQueryOptions<Proposal>(odataQueryContext, new DefaultHttpContext().Request);
 
         // Act
-        var result = await repository.GetProposalsAsync(false);
+        var result = await repository.GetProposalsAsync(false, queryOptions);
 
         // Assert
         result.Should().NotBeNullOrEmpty();
