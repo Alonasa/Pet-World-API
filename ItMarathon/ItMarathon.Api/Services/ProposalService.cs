@@ -304,9 +304,4 @@ public class ProposalService(IUnitOfWork unitOfWork, IMapper mapper, IAzureBlobS
     {
         throw new NotImplementedException();
     }
-
-    Task<object?> IProposalService.GetAllProposalsAsync(HttpRequest request)
-    {
-        throw new NotImplementedException();
-    }
 }
