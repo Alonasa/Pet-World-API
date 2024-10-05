@@ -18,16 +18,21 @@ public class ProposalRepository(ApplicationDbContext repositoryContext) :
             query = (IQueryable<Proposal>)queryOptions.ApplyTo(query);
         }
 
-        query = query
+        int totalCount = await query.CountAsync();
+
+        // Include related data and order by Id
+        var proposals = await query
             .Include(p => p.AppUser)
             .Include(p => p.Photos)
             .Include(p => p.Properties!)
                 .ThenInclude(properties => properties.PropertyDefinition)
             .Include(p => p.Properties!)
                 .ThenInclude(properties => properties.PredefinedValue)
-                    .ThenInclude(prop => prop!.ParentPropertyValue);
+                    .ThenInclude(prop => prop!.ParentPropertyValue)
+            .OrderBy(p => p.Id)
+            .ToListAsync();
 
-        return await query.ToListAsync();
+        return proposals;
     }
 
     public async Task<Proposal?> GetProposalAsync(long proposalId, bool trackChanges)

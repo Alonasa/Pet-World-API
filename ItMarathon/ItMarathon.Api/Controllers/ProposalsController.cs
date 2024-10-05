@@ -29,7 +29,8 @@ public class ProposalsController(IProposalService proposalService, IMapper mappe
         [FromQuery(Name = "$top")] int? top,
         [FromQuery(Name = "$skip")] int? skip,
         [FromQuery(Name = "$filter")] string? filter,
-        [FromQuery(Name = "$orderby")] string? orderby)
+        [FromQuery(Name = "$orderby")] string? orderby
+        )
     {   
         return Ok(await proposalService.GetAllProposalsAsync(Request));
     }
